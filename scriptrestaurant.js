@@ -1,35 +1,42 @@
-const menuDiv = document.getElementById("menu");
+document.addEventListener("DOMContentLoaded", () => {
+  caricaDati("piatti.json");
+});
 
-fetch('piatti.json')
-  .then(response => response.json())
-  .then(data => {
-    data.forEach(piatto => {
-      let piattoDiv = document.createElement("div");
-      piattoDiv.className = `piatto ${piatto.categoria}`;
-      piattoDiv.innerHTML = `
-        <h2>${piatto.nome}</h2>
-        <img src="${piatto.immagine}">
-        <p>${piatto.descrizione}</p>
-        <p class="categoria" style="display:none;">${piatto.categoria}</p>
-        <p>${piatto.prezzo}</p> 
-      `;
-      menuDiv.appendChild(piattoDiv);
-    });
-  })
-  .catch(error => console.error('Error:', error));
+function caricaDati(url) {
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => popolaMenu(data))
+    .catch((error) => console.error("Errore nel caricamento dei dati:", error));
+}
+
+function popolaMenu(data) {
+  const menuDiv = document.getElementById("menu");
+  menuDiv.innerHTML = "";
+
+  data.forEach((piatto) => {
+    const piattoDiv = creaElementoPiatto(piatto);
+    menuDiv.appendChild(piattoDiv);
+  });
+}
+
+function creaElementoPiatto(piatto) {
+  const piattoDiv = document.createElement("div");
+  piattoDiv.className = `piatto ${piatto.categoria}`;
+  piattoDiv.innerHTML = `
+      <h2>${piatto.nome}</h2>
+      <img src="${piatto.immagine}" alt="${piatto.nome}">
+      <p>${piatto.descrizione}</p>
+      <p class="categoria" style="display:none;">${piatto.categoria}</p>
+      <p><strong>Prezzo:</strong> ${piatto.prezzo}€</p>
+  `;
+  return piattoDiv;
+}
 
 function filtra(categoria) {
-  let piatti = document.getElementsByClassName("piatto");
-  for (let i = 0; i < piatti.length; i++) {
-    if (categoria === "Tutto") {
-      piatti[i].classList.remove("hidden");
-      piatti[i].querySelector(".categoria").style.display = "block";
-    } else {
-      if (piatti[i].classList.contains(categoria)) {
-        piatti[i].classList.remove("hidden");
-        piatti[i].querySelector(".categoria").style.display = "none";
-      } else 
-        piatti[i].classList.add("hidden");
-    }
-  }
+  const piatti = document.querySelectorAll(".piatto");
+  piatti.forEach((piatto) => {
+    const isCategoriaMatch =
+      piatto.classList.contains(categoria) || categoria === "Tutto";
+    piatto.style.display = isCategoriaMatch ? "block" : "none";
+  });
 }
