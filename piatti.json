@@ -1,0 +1,37 @@
+[
+  {
+    "nome": "Piatto 1",
+    "prezzo": "€10",
+    "categoria": "Antipasto",
+    "descrizione": "Descrizione piatto 1",
+    "immagine": "url_immagine_1"
+  },
+  {
+    "nome": "Piatto 2",
+    "prezzo": "€12",
+    "categoria": "Primo",
+    "descrizione": "Descrizione piatto 2",
+    "immagine": "url_immagine_2"
+  },
+  {
+    "nome": "Piatto 3",
+    "prezzo": "€8",
+    "categoria": "Secondo",
+    "descrizione": "Descrizione piatto 3",
+    "immagine": "url_immagine_3"
+  },
+  {
+    "nome": "Piatto 4",
+    "prezzo": "€15",
+    "categoria": "Dolce",
+    "descrizione": "Descrizione piatto 4",
+    "immagine": "url_immagine_4"
+  },
+  {
+    "nome": "Piatto 5",
+    "prezzo": "€15",
+    "categoria": "Dolce",
+    "descrizione": "Descrizione piatto 5",
+    "immagine": "url_immagine_4"
+  }
+]
