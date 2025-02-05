@@ -26,8 +26,7 @@ function creaElementoPiatto(piatto) {
       <h2>${piatto.nome}</h2>
       <img src="${piatto.immagine}" alt="${piatto.nome}">
       <p>${piatto.descrizione}</p>
-      <p class="categoria" style="display:none;">${piatto.categoria}</p>
-      <p><strong>Prezzo:</strong> ${piatto.prezzo}€</p>
+      <p><strong>Prezzo:</strong> ${piatto.prezzo} ${piatto.valuta}</p>
   `;
   return piattoDiv;
 }
