@@ -39,3 +39,4 @@ function filtra(categoria) {
     piatto.style.display = isCategoriaMatch ? "block" : "none";
   });
 }
+

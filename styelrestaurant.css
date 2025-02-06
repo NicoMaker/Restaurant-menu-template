@@ -4,30 +4,42 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f8f9fa;
-  text-align: center;
   color: #333;
+  overflow-x: hidden; /* per evitare il salto della pagina */
 }
 
-/* Contenitore principale */
-.container {
+/* Barra di navigazione fissa in alto */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 15px 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
 }
 
-/* Titolo principale */
-h1 {
-  font-size: 2.5rem;
+header h1 {
+  font-size: 2rem;
   color: #d35400;
-  margin-bottom: 20px;
+  margin: 0;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-/* Pulsanti di filtro */
+/* Pulsanti di filtro nella navbar */
 .filter-buttons {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
   gap: 15px;
 }
 
@@ -35,8 +47,8 @@ h1 {
   background-color: #e67e22;
   color: white;
   border: none;
-  padding: 14px 22px;
-  font-size: 18px;
+  padding: 10px 18px;
+  font-size: 16px;
   cursor: pointer;
   border-radius: 10px;
   transition: all 0.3s ease-in-out;
@@ -50,25 +62,37 @@ h1 {
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Griglia dei piatti */
-.menu {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
-  gap: 25px;
+/* Contenitore principale */
+.container {
+  margin-top: 100px; /* Spazio per la navbar fissa */
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* Griglia dei piatti */
+.menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
+  gap: 15px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-y: auto; /* Rende scrollabile il contenuto */
+  height: 500px; /* Altezza fissa per limitare la visibilità */
+  overflow-y: scroll; /* Abilita lo scroll */
+}
+
 /* Stile dei singoli piatti */
 .piatto {
   background-color: white;
-  padding: 20px;
-  border-radius: 15px;
+  padding: 15px;
+  border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: all 0.3s ease-in-out;
   overflow: hidden;
+  max-height: 300px; /* Limita l'altezza del piatto */
 }
 
 .piatto:hover {
@@ -78,7 +102,7 @@ h1 {
 
 .piatto img {
   width: 100%;
-  height: 200px;
+  height: 150px; /* Riduce l'altezza dell'immagine */
   object-fit: cover;
   border-radius: 10px;
   transition: transform 0.3s ease-in-out;
@@ -89,7 +113,7 @@ h1 {
 }
 
 .piatto h2 {
-  font-size: 22px;
+  font-size: 20px;
   margin: 15px 0 10px;
   color: #e67e22;
 }
@@ -104,23 +128,126 @@ h1 {
   font-size: 18px;
 }
 
-/* Responsive Design */
+/* Responsive Design per tablet */
 @media (max-width: 992px) {
   .menu {
     grid-template-columns: repeat(2, 1fr); /* 2 colonne su tablet */
   }
+  header .container {
+    flex-direction: column;
+    align-items: center;
+  }
+  header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
 }
 
+/* Responsive Design per mobile */
 @media (max-width: 576px) {
   .menu {
     grid-template-columns: 1fr; /* 1 colonna su smartphone */
   }
-  .filter-buttons {
+
+  /* Barra di navigazione */
+  header .container {
     flex-direction: column;
     align-items: center;
   }
-  .filter-buttons button {
-    width: 80%;
-    margin: 5px auto;
+
+  .filter-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
+
+  .filter-buttons button {
+    width: 90%;
+  }
+
+  .menu {
+    padding: 10px;
+    gap: 15px;
+    height: calc(100vh - 180px); /* Più spazio per la navbar */
+  }
+}
+
+/* Contenitore principale */
+.container {
+  margin-top: 120px; /* Distanza dall'header fissa */
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Griglia dei piatti */
+.menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
+  gap: 15px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-y: auto; /* Rende scrollabile il contenuto */
+  height: auto; /* Rimuovi l'altezza fissa per lasciare che il contenuto si adatti */
+}
+
+/* Stile dei singoli piatti */
+.piatto {
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  max-height: 300px; /* Limita l'altezza del piatto */
+}
+
+/* Barra di navigazione fissa in alto */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 15px 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Aggiungi un padding-top al body per evitare che il contenuto si sovrapponga alla navbar */
+body {
+  padding-top: 100px; /* Assicurati che questo valore corrisponda all'altezza della navbar */
+}
+
+/* Contenitore principale */
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Griglia dei piatti */
+.menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
+  gap: 15px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-y: auto;
+  height: auto; /* Altezza automatica per far sì che il contenuto si adatti */
+}
+
+/* Stile dei singoli piatti */
+.piatto {
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  max-height: 300px;
 }
