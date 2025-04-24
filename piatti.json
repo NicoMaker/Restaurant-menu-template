@@ -1,34 +1,66 @@
 [
   {
-    "nome": "Piatto 1",
-    "prezzo": 10,
+    "nome": "Bruschetta al Pomodoro",
+    "prezzo": 8.5,
     "valuta": "€",
     "categoria": "Antipasto",
-    "descrizione": "Descrizione piatto 1",
+    "descrizione": "Pane tostato con pomodorini freschi, basilico, aglio e olio extravergine d'oliva",
     "immagine": "url_immagine_1"
   },
   {
-    "nome": "Piatto 2",
-    "prezzo": 12,
+    "nome": "Spaghetti alla Carbonara",
+    "prezzo": 14.0,
     "valuta": "€",
     "categoria": "Primo",
-    "descrizione": "Descrizione piatto 2",
+    "descrizione": "Pasta con uova, guanciale croccante, pecorino romano e pepe nero",
     "immagine": "url_immagine_2"
   },
   {
-    "nome": "Piatto 3",
-    "prezzo": 8,
+    "nome": "Tagliata di Manzo",
+    "prezzo": 22.0,
     "valuta": "€",
     "categoria": "Secondo",
-    "descrizione": "Descrizione piatto 3",
+    "descrizione": "Controfiletto di manzo con rucola, scaglie di parmigiano e riduzione di aceto balsamico",
     "immagine": "url_immagine_3"
   },
   {
-    "nome": "Piatto 4",
-    "prezzo": 15,
+    "nome": "Tiramisù",
+    "prezzo": 7.5,
     "valuta": "€",
     "categoria": "Dolce",
-    "descrizione": "Descrizione piatto 4",
+    "descrizione": "Dolce classico italiano con savoiardi, mascarpone, caffè e cacao",
     "immagine": "url_immagine_4"
+  },
+  {
+    "nome": "Carpaccio di Polpo",
+    "prezzo": 12.5,
+    "valuta": "€",
+    "categoria": "Antipasto",
+    "descrizione": "Sottili fette di polpo con olio al limone, rucola e pomodorini",
+    "immagine": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "nome": "Risotto ai Funghi Porcini",
+    "prezzo": 16.0,
+    "valuta": "€",
+    "categoria": "Primo",
+    "descrizione": "Riso Carnaroli con funghi porcini, burro, parmigiano e prezzemolo",
+    "immagine": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "nome": "Filetto di Branzino",
+    "prezzo": 24.0,
+    "valuta": "€",
+    "categoria": "Secondo",
+    "descrizione": "Filetto di branzino al forno con patate, pomodorini e olive",
+    "immagine": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "nome": "Panna Cotta",
+    "prezzo": 6.5,
+    "valuta": "€",
+    "categoria": "Dolce",
+    "descrizione": "Dolce cremoso con salsa ai frutti di bosco",
+    "immagine": "https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
   }
 ]

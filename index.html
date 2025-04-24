@@ -1,41 +1,50 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Menù Ristorante</title>
-    <link rel="stylesheet" href="styelrestaurant.css" />
-    "
-    <script src="scriptrestaurant.js" defer></script>
-  </head>
-  <body>
-    <header>
-      <div class="container">
-        <h1>Menù Ristorante</h1>
-        <div class="filter-buttons">
-          <button onclick="filtra('Antipasto')">Antipasto</button>
-          <button onclick="filtra('Primo')">Primo</button>
-          <button onclick="filtra('Secondo')">Secondo</button>
-          <button onclick="filtra('Dolce')">Dolce</button>
-          <button onclick="filtra('Tutto')">Tutto</button>
-        </div>
-      </div>
-    </header>
 
-    <main>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menù Ristorante</title>
+  <link rel="stylesheet" href="styelrestaurant.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <script src="scriptrestaurant.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <h1>La Cucina Italiana</h1>
+      <nav class="filter-buttons">
+        <button onclick="filtra('Antipasto')" class="filter-btn">Antipasto</button>
+        <button onclick="filtra('Primo')" class="filter-btn">Primo</button>
+        <button onclick="filtra('Secondo')" class="filter-btn">Secondo</button>
+        <button onclick="filtra('Dolce')" class="filter-btn">Dolce</button>
+        <button onclick="filtra('Tutto')" class="filter-btn active">Tutto</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
       <div class="container">
-        <div id="menu" class="menu"></div>
+        <h2>Il nostro menù</h2>
+        <p>Scopri i sapori autentici della tradizione italiana</p>
       </div>
-    </main>
-  </body>
+    </div>
+    <div class="container">
+      <div id="menu" class="menu"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 La Cucina Italiana. Tutti i diritti riservati.</p>
+    </div>
+  </footer>
+</body>
+
 </html>

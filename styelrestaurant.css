@@ -1,11 +1,31 @@
 /* Stili generali */
+:root {
+  --primary-color: #d35400;
+  --secondary-color: #e67e22;
+  --text-color: #333;
+  --light-text: #777;
+  --background: #f8f9fa;
+  --card-bg: #fff;
+  --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --border-radius: 12px;
+  --transition: all 0.3s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: "Poppins", Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa;
-  color: #333;
-  overflow-x: hidden; /* per evitare il salto della pagina */
+  background-color: var(--background);
+  color: var(--text-color);
+  overflow-x: hidden;
+  line-height: 1.6;
 }
 
 /* Barra di navigazione fissa in alto */
@@ -14,10 +34,10 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
+  background-color: var(--card-bg);
   padding: 15px 0;
   z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 header .container {
@@ -30,41 +50,67 @@ header .container {
 }
 
 header h1 {
-  font-size: 2rem;
-  color: #d35400;
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem;
+  color: var(--primary-color);
   margin: 0;
   font-weight: bold;
-  text-transform: uppercase;
 }
 
 /* Pulsanti di filtro nella navbar */
 .filter-buttons {
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.filter-buttons button {
-  background-color: #e67e22;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  font-size: 16px;
+.filter-btn {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 2px solid var(--secondary-color);
+  padding: 8px 16px;
+  font-size: 15px;
   cursor: pointer;
-  border-radius: 10px;
-  transition: all 0.3s ease-in-out;
-  font-weight: bold;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  transition: var(--transition);
+  font-weight: 500;
 }
 
-.filter-buttons button:hover {
-  background-color: #d35400;
-  transform: translateY(-3px);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+.filter-btn:hover,
+.filter-btn.active {
+  background-color: var(--secondary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Hero section */
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80");
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+  margin-top: 80px;
+}
+
+.hero h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  font-weight: 300;
 }
 
 /* Contenitore principale */
 .container {
-  margin-top: 100px; /* Spazio per la navbar fissa */
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
@@ -73,181 +119,182 @@ header h1 {
 /* Griglia dei piatti */
 .menu {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
-  gap: 15px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  overflow-y: auto; /* Rende scrollabile il contenuto */
-  height: 500px; /* Altezza fissa per limitare la visibilità */
-  overflow-y: scroll; /* Abilita lo scroll */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  padding: 40px 0;
 }
 
 /* Stile dei singoli piatti */
 .piatto {
-  background-color: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: all 0.3s ease-in-out;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
   overflow: hidden;
-  max-height: 300px; /* Limita l'altezza del piatto */
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .piatto:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--hover-shadow);
+}
+
+.piatto-img-container {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
 }
 
 .piatto img {
   width: 100%;
-  height: 150px; /* Riduce l'altezza dell'immagine */
+  height: 100%;
   object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.3s ease-in-out;
+  transition: var(--transition);
 }
 
 .piatto:hover img {
   transform: scale(1.05);
 }
 
+.piatto-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .piatto h2 {
-  font-size: 20px;
-  margin: 15px 0 10px;
-  color: #e67e22;
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
 }
 
-.piatto p {
-  font-size: 16px;
-  color: #555;
+.piatto-categoria {
+  display: inline-block;
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 15px;
 }
 
-.piatto p strong {
-  color: #c0392b;
-  font-size: 18px;
+.piatto-descrizione {
+  color: var(--light-text);
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+
+.piatto-prezzo {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-top: auto;
+}
+
+/* Badge per categoria */
+.categoria-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Footer */
+footer {
+  background-color: var(--text-color);
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.piatto {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 /* Responsive Design per tablet */
 @media (max-width: 992px) {
-  .menu {
-    grid-template-columns: repeat(2, 1fr); /* 2 colonne su tablet */
-  }
   header .container {
     flex-direction: column;
     align-items: center;
   }
+
   header h1 {
-    font-size: 1.8rem;
     margin-bottom: 15px;
+  }
+
+  .hero {
+    margin-top: 120px;
+    padding: 60px 20px;
+  }
+
+  .hero h2 {
+    font-size: 2.5rem;
   }
 }
 
 /* Responsive Design per mobile */
-@media (max-width: 576px) {
-  .menu {
-    grid-template-columns: 1fr; /* 1 colonna su smartphone */
+@media (max-width: 768px) {
+  .filter-buttons {
+    gap: 8px;
   }
 
-  /* Barra di navigazione */
-  header .container {
-    flex-direction: column;
-    align-items: center;
+  .filter-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .hero {
+    margin-top: 140px;
+    padding: 40px 20px;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  header h1 {
+    font-size: 1.8rem;
   }
 
   .filter-buttons {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .filter-buttons button {
-    width: 90%;
+    margin-top: 10px;
+    justify-content: center;
   }
 
   .menu {
-    padding: 10px;
-    gap: 15px;
-    height: calc(100vh - 180px); /* Più spazio per la navbar */
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
-}
 
-/* Contenitore principale */
-.container {
-  margin-top: 120px; /* Distanza dall'header fissa */
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Griglia dei piatti */
-.menu {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
-  gap: 15px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  overflow-y: auto; /* Rende scrollabile il contenuto */
-  height: auto; /* Rimuovi l'altezza fissa per lasciare che il contenuto si adatti */
-}
-
-/* Stile dei singoli piatti */
-.piatto {
-  background-color: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: all 0.3s ease-in-out;
-  overflow: hidden;
-  max-height: 300px; /* Limita l'altezza del piatto */
-}
-
-/* Barra di navigazione fissa in alto */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #ffffff;
-  padding: 15px 0;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Aggiungi un padding-top al body per evitare che il contenuto si sovrapponga alla navbar */
-body {
-  padding-top: 100px; /* Assicurati che questo valore corrisponda all'altezza della navbar */
-}
-
-/* Contenitore principale */
-.container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Griglia dei piatti */
-.menu {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonne su PC */
-  gap: 15px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  overflow-y: auto;
-  height: auto; /* Altezza automatica per far sì che il contenuto si adatti */
-}
-
-/* Stile dei singoli piatti */
-.piatto {
-  background-color: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: all 0.3s ease-in-out;
-  overflow: hidden;
-  max-height: 300px;
+  .piatto-img-container {
+    height: 180px;
+  }
 }
