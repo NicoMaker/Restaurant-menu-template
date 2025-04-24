@@ -4,6 +4,7 @@
     "prezzo": 8.5,
     "valuta": "€",
     "categoria": "Antipasto",
+    "categorie": ["Antipasto", "Vegetariano"],
     "descrizione": "Pane tostato con pomodorini freschi, basilico, aglio e olio extravergine d'oliva",
     "immagine": "url_immagine_1"
   },
@@ -12,6 +13,7 @@
     "prezzo": 14.0,
     "valuta": "€",
     "categoria": "Primo",
+    "categorie": ["Primo", "Specialità"],
     "descrizione": "Pasta con uova, guanciale croccante, pecorino romano e pepe nero",
     "immagine": "url_immagine_2"
   },
@@ -20,6 +22,7 @@
     "prezzo": 22.0,
     "valuta": "€",
     "categoria": "Secondo",
+    "categorie": ["Secondo", "Specialità"],
     "descrizione": "Controfiletto di manzo con rucola, scaglie di parmigiano e riduzione di aceto balsamico",
     "immagine": "url_immagine_3"
   },
@@ -28,6 +31,7 @@
     "prezzo": 7.5,
     "valuta": "€",
     "categoria": "Dolce",
+    "categorie": ["Dolce", "Specialità"],
     "descrizione": "Dolce classico italiano con savoiardi, mascarpone, caffè e cacao",
     "immagine": "url_immagine_4"
   },
@@ -36,6 +40,7 @@
     "prezzo": 12.5,
     "valuta": "€",
     "categoria": "Antipasto",
+    "categorie": ["Antipasto", "Pesce"],
     "descrizione": "Sottili fette di polpo con olio al limone, rucola e pomodorini",
     "immagine": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
   },
@@ -44,6 +49,7 @@
     "prezzo": 16.0,
     "valuta": "€",
     "categoria": "Primo",
+    "categorie": ["Primo", "Vegetariano"],
     "descrizione": "Riso Carnaroli con funghi porcini, burro, parmigiano e prezzemolo",
     "immagine": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
   },
@@ -52,6 +58,7 @@
     "prezzo": 24.0,
     "valuta": "€",
     "categoria": "Secondo",
+    "categorie": ["Secondo", "Pesce"],
     "descrizione": "Filetto di branzino al forno con patate, pomodorini e olive",
     "immagine": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
   },
@@ -60,6 +67,7 @@
     "prezzo": 6.5,
     "valuta": "€",
     "categoria": "Dolce",
+    "categorie": ["Dolce"],
     "descrizione": "Dolce cremoso con salsa ai frutti di bosco",
     "immagine": "https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
   }
