@@ -1,30 +1,39 @@
 document.addEventListener("DOMContentLoaded", () => {
   caricaDati("piatti.json");
 
-  // Imposta il pulsante "Tutto" come attivo all'inizio
   document.querySelectorAll(".filter-btn").forEach((btn) => {
-    if (btn.textContent.trim() === "Tutto") {
-      btn.classList.add("active");
-    }
+    btn.addEventListener("click", () => {
+      const categoria = btn.getAttribute("data-category");
 
-    // Aggiungi event listener per gestire lo stato attivo dei pulsanti
-    btn.addEventListener("click", function () {
-      document
-        .querySelectorAll(".filter-btn")
-        .forEach((b) => b.classList.remove("active"));
-      this.classList.add("active");
+      if (categoria === "Tutto") {
+        // Se si clicca "Tutto", disattiva gli altri e attiva solo "Tutto"
+        document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      } else {
+        // Altrimenti, gestisci la selezione/deselezione del pulsante
+        btn.classList.toggle("active");
+        // Disattiva "Tutto" se si seleziona un'altra categoria
+        document.querySelector('.filter-btn[data-category="Tutto"]').classList.remove("active");
+      }
 
-      // Resetta il campo di ricerca quando si cambia categoria
-      document.getElementById("search-input").value = "";
+      const activeButtons = document.querySelectorAll(".filter-btn.active");
+      const categoryButtons = document.querySelectorAll('.filter-btn:not([data-category="Tutto"])');
+
+      // Se nessuna categoria è selezionata o tutte sono selezionate, attiva "Tutto"
+      if (activeButtons.length === 0 || activeButtons.length === categoryButtons.length) {
+        categoryButtons.forEach((b) => b.classList.remove("active"));
+        document.querySelector('.filter-btn[data-category="Tutto"]').classList.add("active");
+      }
+
+      // Filtra i piatti in base alle nuove selezioni
+      filtraPiatti();
     });
   });
 
   // Aggiungi event listener per la ricerca in tempo reale
   document
     .getElementById("search-input")
-    .addEventListener("input", function () {
-      cercaPiatti(this.value);
-    });
+    .addEventListener("input", filtraPiatti);
 });
 
 // Variabile globale per memorizzare tutti i piatti
@@ -114,30 +123,14 @@ function creaElementoPiatto(piatto) {
 
   piattoDiv.className = `piatto${classiCategorie}`;
 
-  // Ottieni la categoria attiva corrente
-  const categoriaAttiva = document
-    .querySelector(".filter-btn.active")
-    .textContent.trim();
-
-  // Determina quali badge di categoria mostrare
+  // Mostra sempre tutte le categorie del piatto come badge
   let badgeCategoria = "";
-  if (categoriaAttiva === "Tutto") {
-    // Se è selezionato "Tutto", mostra tutte le categorie
-    if (Array.isArray(piatto.categorie)) {
-      badgeCategoria = piatto.categorie
-        .map((cat) => `<span class="categoria-badge">${cat}</span>`)
-        .join("");
-    } else {
-      badgeCategoria = `<span class="categoria-badge">${piatto.categoria}</span>`;
-    }
+  if (Array.isArray(piatto.categorie)) {
+    badgeCategoria = piatto.categorie
+      .map((cat) => `<span class="categoria-badge">${cat}</span>`)
+      .join("");
   } else {
-    // Altrimenti, non mostrare badge per la categoria selezionata
-    if (Array.isArray(piatto.categorie)) {
-      badgeCategoria = piatto.categorie
-        .filter((cat) => cat !== categoriaAttiva)
-        .map((cat) => `<span class="categoria-badge">${cat}</span>`)
-        .join("");
-    }
+    badgeCategoria = `<span class="categoria-badge">${piatto.categoria}</span>`;
   }
 
   piattoDiv.innerHTML = `
@@ -155,64 +148,26 @@ function creaElementoPiatto(piatto) {
   return piattoDiv;
 }
 
-function filtra(categoria) {
-  // Resetta il campo di ricerca
-  document.getElementById("search-input").value = "";
+function filtraPiatti() {
+  const query = document.getElementById("search-input").value.toLowerCase().trim();
+  
+  // Ottieni le categorie attive
+  const activeCategories = [...document.querySelectorAll(".filter-btn.active")]
+    .map(btn => btn.getAttribute("data-category"));
 
-  const piatti = document.querySelectorAll(".piatto");
+  // Controlla se "Tutto" è selezionato
+  const showAll = activeCategories.includes("Tutto");
 
-  if (categoria === "Tutto") {
-    // Mostra tutti i piatti
-    popolaMenu(tuttiPiatti);
-  } else {
-    // Filtra i piatti per categoria
-    const piattoFiltrati = tuttiPiatti.filter((piatto) => {
-      if (Array.isArray(piatto.categorie)) {
-        return piatto.categorie.includes(categoria);
-      } else {
-        return piatto.categoria === categoria;
-      }
-    });
-
-    popolaMenu(piattoFiltrati);
-  }
-}
-
-function cercaPiatti(query) {
-  query = query.toLowerCase().trim();
-
-  // Se la query è vuota, mostra tutti i piatti della categoria corrente
-  if (query === "") {
-    const categoriaAttiva = document
-      .querySelector(".filter-btn.active")
-      .textContent.trim();
-    filtra(categoriaAttiva);
-    return;
-  }
-
-  // Ottieni la categoria attualmente selezionata
-  const categoriaAttiva = document
-    .querySelector(".filter-btn.active")
-    .textContent.trim();
-
-  // Filtra i piatti in base alla query e alla categoria selezionata
   const piattoFiltrati = tuttiPiatti.filter((piatto) => {
     // Verifica se il piatto corrisponde alla query di ricerca
     const matchQuery =
       piatto.nome.toLowerCase().includes(query) ||
       piatto.descrizione.toLowerCase().includes(query);
 
-    // Se è selezionato "Tutto", mostra tutti i piatti che corrispondono alla query
-    if (categoriaAttiva === "Tutto") {
-      return matchQuery;
-    } else {
-      // Altrimenti, filtra anche per categoria
-      const matchCategoria = Array.isArray(piatto.categorie)
-        ? piatto.categorie.includes(categoriaAttiva)
-        : piatto.categoria === categoriaAttiva;
+    // Verifica se il piatto appartiene a una delle categorie selezionate
+    const matchCategoria = showAll || piatto.categorie.some(cat => activeCategories.includes(cat));
 
-      return matchQuery && matchCategoria;
-    }
+    return matchQuery && matchCategoria;
   });
 
   popolaMenu(piattoFiltrati);

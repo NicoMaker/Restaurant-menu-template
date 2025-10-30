@@ -22,11 +22,11 @@
         <input type="text" id="search-input" placeholder="Cerca piatti..." class="search-input">
       </div>
       <nav class="filter-buttons">
-        <button onclick="filtra('Antipasto')" class="filter-btn">Antipasto</button>
-        <button onclick="filtra('Primo')" class="filter-btn">Primo</button>
-        <button onclick="filtra('Secondo')" class="filter-btn">Secondo</button>
-        <button onclick="filtra('Dolce')" class="filter-btn">Dolce</button>
-        <button onclick="filtra('Tutto')" class="filter-btn active">Tutto</button>
+        <button data-category="Tutto" class="filter-btn active">Tutto</button>
+        <button data-category="Antipasto" class="filter-btn">Antipasto</button>
+        <button data-category="Primo" class="filter-btn">Primo</button>
+        <button data-category="Secondo" class="filter-btn">Secondo</button>
+        <button data-category="Dolce" class="filter-btn">Dolce</button>
       </nav>
     </div>
   </header>
