@@ -3,17 +3,15 @@ let tuttiPiatti = [];
 
 // ─────────────── INIT ───────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Hero parallax entrance
   setTimeout(() => {
     const heroBg = document.getElementById('hero-bg');
     if (heroBg) heroBg.classList.add('loaded');
   }, 100);
 
-  // Load data
   fetch('piatti.json')
     .then(r => { if (!r.ok) throw new Error('Fetch failed'); return r.json(); })
     .then(data => {
-      tuttiPiatti = data.map(arricchisci);
+      tuttiPiatti = data.map(normalizza);
       render(tuttiPiatti);
     })
     .catch(() => {
@@ -24,31 +22,35 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
     });
 
-  // Filter buttons
+  // Filtri — supporta selezione multipla
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const cat = btn.dataset.category;
+
       if (cat === 'Tutto') {
+        // Tutto: deseleziona tutto e attiva solo Tutto
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       } else {
-        btn.classList.toggle('active');
+        // Deseleziona "Tutto" e toglia il filtro cliccato
         document.querySelector('.filter-btn[data-category="Tutto"]').classList.remove('active');
-        const active = document.querySelectorAll('.filter-btn.active');
-        const others = document.querySelectorAll('.filter-btn:not([data-category="Tutto"])');
-        if (active.length === 0 || active.length === others.length) {
-          others.forEach(b => b.classList.remove('active'));
+        btn.classList.toggle('active');
+
+        // Se non rimane nessun filtro attivo → riattiva Tutto
+        const attivi = document.querySelectorAll('.filter-btn.active');
+        if (attivi.length === 0) {
           document.querySelector('.filter-btn[data-category="Tutto"]').classList.add('active');
         }
       }
+
       filtra();
     });
   });
 
-  // Search
+  // Ricerca live
   document.getElementById('search-input').addEventListener('input', filtra);
 
-  // Modal close
+  // Modal — chiusura
   document.getElementById('modal-close').addEventListener('click', chiudiModal);
   document.getElementById('modal-backdrop').addEventListener('click', e => {
     if (e.target === e.currentTarget) chiudiModal();
@@ -56,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') chiudiModal(); });
 });
 
-// ─────────────── DATA HELPERS ───────────────
+// ─────────────── NORMALIZZAZIONE DATI ───────────────
+// Gestisce sia vecchi json con "categoria" stringa
+// sia nuovi con solo "categorie" array
 const IMAGE_MAP = {
   'url_immagine_1': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
   'url_immagine_2': 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80',
@@ -64,10 +68,24 @@ const IMAGE_MAP = {
   'url_immagine_4': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80',
 };
 
-function arricchisci(p) {
+function normalizza(p) {
+  // Immagine
   if (IMAGE_MAP[p.immagine]) p.immagine = IMAGE_MAP[p.immagine];
-  if (!Array.isArray(p.categorie)) p.categorie = [p.categoria];
-  if (!p.ingredienti) p.ingredienti = estraiIngredienti(p.descrizione);
+
+  // Categorie: accetta sia array che stringa singola
+  if (Array.isArray(p.categorie) && p.categorie.length > 0) {
+    // già ok — usa categorie array
+  } else if (typeof p.categoria === 'string' && p.categoria) {
+    p.categorie = [p.categoria];
+  } else {
+    p.categorie = ['Altro'];
+  }
+
+  // Ingredienti: se assenti li estrae dalla descrizione
+  if (!Array.isArray(p.ingredienti) || p.ingredienti.length === 0) {
+    p.ingredienti = estraiIngredienti(p.descrizione);
+  }
+
   return p;
 }
 
@@ -75,10 +93,13 @@ function estraiIngredienti(desc) {
   return desc
     .split(/,\s?/)
     .slice(0, 5)
-    .map(s => s.trim().replace(/^(con|e|al|ai|agli|alla|alle)\s/i, '').replace(/^\w/, c => c.toUpperCase()));
+    .map(s => s.trim()
+      .replace(/^(con|e|al|ai|agli|alla|alle|di)\s/i, '')
+      .replace(/^\w/, c => c.toUpperCase())
+    );
 }
 
-// ─────────────── RENDER ───────────────
+// ─────────────── RENDER GRIGLIA ───────────────
 function render(lista) {
   const container = document.getElementById('menu');
   const count = document.getElementById('results-count');
@@ -103,11 +124,11 @@ function render(lista) {
 
 function creaCard(piatto) {
   const card = document.createElement('div');
-  const cats = piatto.categorie || [piatto.categoria];
-  card.className = 'piatto ' + cats.join(' ');
+  // Aggiunge tutte le categorie come classi CSS (utile per stili futuri)
+  card.className = 'piatto ' + piatto.categorie.map(c => c.replace(/\s+/g, '-')).join(' ');
 
-  const badgesHTML = cats
-    .map((c, j) => `<span class="badge ${j === 0 ? 'badge-main' : 'badge-extra'}">${c}</span>`)
+  const badgesHTML = piatto.categorie
+    .map((c, i) => `<span class="badge ${i === 0 ? 'badge-main' : 'badge-extra'}">${c}</span>`)
     .join('');
 
   card.innerHTML = `
@@ -134,16 +155,31 @@ function creaCard(piatto) {
   return card;
 }
 
-// ─────────────── FILTER ───────────────
+// ─────────────── FILTRO + RICERCA ───────────────
 function filtra() {
   const q = document.getElementById('search-input').value.toLowerCase().trim();
-  const active = [...document.querySelectorAll('.filter-btn.active')].map(b => b.dataset.category);
-  const showAll = active.includes('Tutto');
+
+  // Categorie attive (esclude "Tutto")
+  const attivi = [...document.querySelectorAll('.filter-btn.active')]
+    .map(b => b.dataset.category)
+    .filter(c => c !== 'Tutto');
+
+  const mostraTutto = attivi.length === 0 ||
+    document.querySelector('.filter-btn[data-category="Tutto"]').classList.contains('active');
 
   const risultati = tuttiPiatti.filter(p => {
-    const matchQ = !q || p.nome.toLowerCase().includes(q) || p.descrizione.toLowerCase().includes(q);
-    const matchC = showAll || p.categorie.some(c => active.includes(c));
-    return matchQ && matchC;
+    // Ricerca testo su nome, descrizione e ingredienti
+    const matchTesto = !q ||
+      p.nome.toLowerCase().includes(q) ||
+      p.descrizione.toLowerCase().includes(q) ||
+      p.ingredienti.some(ing => ing.toLowerCase().includes(q)) ||
+      p.categorie.some(c => c.toLowerCase().includes(q));
+
+    // Filtro categorie: il piatto deve avere ALMENO UNA categoria tra quelle attive
+    const matchCategoria = mostraTutto ||
+      p.categorie.some(c => attivi.includes(c));
+
+    return matchTesto && matchCategoria;
   });
 
   render(risultati);
@@ -155,15 +191,16 @@ function apriModal(piatto) {
   document.getElementById('modal-img').alt = piatto.nome;
   document.getElementById('modal-nome').textContent = piatto.nome;
   document.getElementById('modal-desc').textContent = piatto.descrizione;
-  document.getElementById('modal-prezzo').textContent = `${piatto.prezzo.toFixed(2)} ${piatto.valuta}`;
+  document.getElementById('modal-prezzo').textContent =
+    `${piatto.prezzo.toFixed(2)} ${piatto.valuta}`;
 
-  const badges = document.getElementById('modal-badges');
-  badges.innerHTML = (piatto.categorie || [piatto.categoria])
+  // Tutti i badge categorie nel modal
+  document.getElementById('modal-badges').innerHTML = piatto.categorie
     .map(c => `<span class="modal-badge">${c}</span>`)
     .join('');
 
-  const ings = document.getElementById('modal-ingredients');
-  ings.innerHTML = (piatto.ingredienti || [])
+  // Ingredienti
+  document.getElementById('modal-ingredients').innerHTML = piatto.ingredienti
     .map(i => `<span class="ingredient-tag">${i}</span>`)
     .join('');
 
