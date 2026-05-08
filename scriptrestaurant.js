@@ -88,31 +88,37 @@ function costruisciFiltri(lista) {
 }
 
 // ─────────────── BIND EVENTI FILTRI ───────────────
+function attivaStatoTutto() {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'all-highlight'));
+  document.querySelector('.filter-btn[data-category="Tutto"]').classList.add('active');
+}
+
 function bindFiltri() {
+  const tuttiBottoniCategoria = () =>
+    [...document.querySelectorAll('.filter-btn:not([data-category="Tutto"])')];
+
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const cat = btn.dataset.category;
 
       if (cat === 'Tutto') {
-        // Tutto: tutti attivi per effetto visivo, ma logica = mostra tutto
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        // Evidenzia tutti i filtri
-        document.querySelectorAll('.filter-btn:not([data-category="Tutto"])').forEach(b => b.classList.add('all-highlight'));
+        attivaStatoTutto();
       } else {
-        // Rimuove highlight globale
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('all-highlight'));
-        // Deseleziona "Tutto"
+        // Rimuove "Tutto" e i suoi highlight
         document.querySelector('.filter-btn[data-category="Tutto"]').classList.remove('active');
-        // Toggle questo filtro
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('all-highlight'));
+
         btn.classList.toggle('active');
 
-        // Se non rimane nessun filtro attivo → riattiva Tutto con highlight
-        const attivi = document.querySelectorAll('.filter-btn.active');
+        const attivi = [...document.querySelectorAll('.filter-btn.active')];
+        const totaleCategorie = tuttiBottoniCategoria().length;
+
         if (attivi.length === 0) {
-          const tuttoBtn = document.querySelector('.filter-btn[data-category="Tutto"]');
-          tuttoBtn.classList.add('active');
-          document.querySelectorAll('.filter-btn:not([data-category="Tutto"])').forEach(b => b.classList.add('all-highlight'));
+          // Nessuno selezionato → Tutto
+          attivaStatoTutto();
+        } else if (attivi.length === totaleCategorie) {
+          // Tutti i filtri categoria selezionati → collassa su Tutto
+          attivaStatoTutto();
         }
       }
 
@@ -120,8 +126,8 @@ function bindFiltri() {
     });
   });
 
-  // All'avvio con "Tutto" attivo → tutti evidenziati
-  document.querySelectorAll('.filter-btn:not([data-category="Tutto"])').forEach(b => b.classList.add('all-highlight'));
+  // Avvio: stato Tutto
+  attivaStatoTutto();
 }
 
 // ─────────────── NORMALIZZAZIONE ───────────────
