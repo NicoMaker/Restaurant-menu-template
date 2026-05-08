@@ -414,3 +414,128 @@ footer span { color: var(--gold-light); }
   .modal-backdrop { align-items: center; padding: 20px; }
   .modal          { border-radius: 28px; max-height: 88vh; }
 }
+/* ─────────────── FILTRO CONTATORI ─────────────── */
+.filter-count {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+  padding: 1px 5px;
+  margin-left: 3px;
+  opacity: 0.8;
+  vertical-align: middle;
+}
+.filter-btn.active .filter-count {
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+}
+.filter-btn:not(.active) .filter-count {
+  background: rgba(184,146,74,0.12);
+  color: var(--muted);
+}
+
+/* ─────────────── BADGE HIGHLIGHT (categoria matchata) ─────────────── */
+.badge-highlight {
+  background: rgba(184,146,74,0.92) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(184,146,74,0.5);
+  transform: scale(1.04);
+}
+
+/* ─────────────── MULTI-CATEGORIA BADGE ─────────────── */
+.multi-badge {
+  position: absolute;
+  bottom: 10px; right: 10px;
+  font-size: 0.62rem; font-weight: 700;
+  background: rgba(26,18,9,0.6);
+  color: rgba(255,255,255,0.85);
+  padding: 3px 7px;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.04em;
+}
+
+/* ─────────────── PILL CATEGORIE NELLA CARD ─────────────── */
+.piatto-pills {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-top: 4px; margin-bottom: 2px;
+}
+.cat-pill {
+  font-size: 0.68rem; font-weight: 500;
+  padding: 3px 9px; border-radius: 20px;
+  border: 1px solid rgba(184,146,74,0.25);
+  color: var(--muted);
+  background: transparent;
+  letter-spacing: 0.03em;
+  transition: var(--trans);
+}
+/* Pill evidenziata quando la categoria è tra quelle filtrate */
+.cat-pill-active {
+  background: rgba(193,68,14,0.08);
+  border-color: var(--ember);
+  color: var(--ember);
+  font-weight: 600;
+}
+
+/* ─────────────── ALL HIGHLIGHT (quando Tutto è attivo) ─────────────── */
+.filter-btn.all-highlight {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(193,68,14,0.25);
+  opacity: 0.75;
+}
+.filter-btn.all-highlight .filter-count {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+/* ─────────────── FILTRO CONTATORI ─────────────── */
+.filter-count {
+  display: inline-block;
+  font-size: 0.65rem; font-weight: 600;
+  background: rgba(255,255,255,0.22);
+  border-radius: 10px;
+  padding: 1px 5px; margin-left: 3px;
+  opacity: 0.85; vertical-align: middle;
+}
+.filter-btn:not(.active):not(.all-highlight) .filter-count {
+  background: rgba(184,146,74,0.12);
+  color: var(--muted);
+}
+
+/* ─────────────── BADGE HIGHLIGHT ─────────────── */
+.badge-highlight {
+  background: rgba(184,146,74,0.92) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(184,146,74,0.5);
+}
+
+/* ─────────────── MULTI BADGE ─────────────── */
+.multi-badge {
+  position: absolute; bottom: 10px; right: 10px;
+  font-size: 0.62rem; font-weight: 700;
+  background: rgba(26,18,9,0.6);
+  color: rgba(255,255,255,0.85);
+  padding: 3px 7px; border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+/* ─────────────── PILL CATEGORIE CARD ─────────────── */
+.piatto-pills {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin: 4px 0 2px;
+}
+.cat-pill {
+  font-size: 0.68rem; font-weight: 500;
+  padding: 3px 9px; border-radius: 20px;
+  border: 1px solid rgba(184,146,74,0.25);
+  color: var(--muted); background: transparent;
+  transition: var(--trans);
+}
+.cat-pill-active {
+  background: rgba(193,68,14,0.08);
+  border-color: var(--ember);
+  color: var(--ember); font-weight: 600;
+}
