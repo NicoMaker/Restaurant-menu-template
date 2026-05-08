@@ -1,174 +1,177 @@
-document.addEventListener("DOMContentLoaded", () => {
-  caricaDati("piatti.json");
-
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const categoria = btn.getAttribute("data-category");
-
-      if (categoria === "Tutto") {
-        // Se si clicca "Tutto", disattiva gli altri e attiva solo "Tutto"
-        document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-      } else {
-        // Altrimenti, gestisci la selezione/deselezione del pulsante
-        btn.classList.toggle("active");
-        // Disattiva "Tutto" se si seleziona un'altra categoria
-        document.querySelector('.filter-btn[data-category="Tutto"]').classList.remove("active");
-      }
-
-      const activeButtons = document.querySelectorAll(".filter-btn.active");
-      const categoryButtons = document.querySelectorAll('.filter-btn:not([data-category="Tutto"])');
-
-      // Se nessuna categoria è selezionata o tutte sono selezionate, attiva "Tutto"
-      if (activeButtons.length === 0 || activeButtons.length === categoryButtons.length) {
-        categoryButtons.forEach((b) => b.classList.remove("active"));
-        document.querySelector('.filter-btn[data-category="Tutto"]').classList.add("active");
-      }
-
-      // Filtra i piatti in base alle nuove selezioni
-      filtraPiatti();
-    });
-  });
-
-  // Aggiungi event listener per la ricerca in tempo reale
-  document
-    .getElementById("search-input")
-    .addEventListener("input", filtraPiatti);
-});
-
-// Variabile globale per memorizzare tutti i piatti
+// ─────────────── STATE ───────────────
 let tuttiPiatti = [];
 
-function caricaDati(url) {
-  fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Errore nel caricamento dei dati");
+// ─────────────── INIT ───────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Hero parallax entrance
+  setTimeout(() => {
+    const heroBg = document.getElementById('hero-bg');
+    if (heroBg) heroBg.classList.add('loaded');
+  }, 100);
+
+  // Load data
+  fetch('piatti.json')
+    .then(r => { if (!r.ok) throw new Error('Fetch failed'); return r.json(); })
+    .then(data => {
+      tuttiPiatti = data.map(arricchisci);
+      render(tuttiPiatti);
+    })
+    .catch(() => {
+      document.getElementById('menu').innerHTML = `
+        <div class="no-results">
+          <div class="nr-icon">⚠️</div>
+          <p>Impossibile caricare il menù. Verifica che <strong>piatti.json</strong> sia nella stessa cartella.</p>
+        </div>`;
+    });
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.category;
+      if (cat === 'Tutto') {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else {
+        btn.classList.toggle('active');
+        document.querySelector('.filter-btn[data-category="Tutto"]').classList.remove('active');
+        const active = document.querySelectorAll('.filter-btn.active');
+        const others = document.querySelectorAll('.filter-btn:not([data-category="Tutto"])');
+        if (active.length === 0 || active.length === others.length) {
+          others.forEach(b => b.classList.remove('active'));
+          document.querySelector('.filter-btn[data-category="Tutto"]').classList.add('active');
+        }
       }
-      return response.json();
-    })
-    .then((data) => {
-      // Aggiungi immagini reali se mancanti
-      data = data.map((piatto) => {
-        if (piatto.immagine === "url_immagine_1") {
-          piatto.immagine =
-            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
-        } else if (piatto.immagine === "url_immagine_2") {
-          piatto.immagine =
-            "https://images.unsplash.com/photo-1551183053-bf91a1d81141?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
-        } else if (piatto.immagine === "url_immagine_3") {
-          piatto.immagine =
-            "https://images.unsplash.com/photo-1432139555190-58524dae6a55?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
-        } else if (piatto.immagine === "url_immagine_4") {
-          piatto.immagine =
-            "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
-        }
-
-        // Assicurati che la categoria sia un array
-        if (!Array.isArray(piatto.categorie)) {
-          piatto.categorie = [piatto.categoria];
-        }
-
-        return piatto;
-      });
-
-      // Salva tutti i piatti nella variabile globale
-      tuttiPiatti = data;
-
-      popolaMenu(data);
-    })
-    .catch((error) => {
-      console.error("Errore:", error);
-      document.getElementById("menu").innerHTML = `
-        <div class="errore">
-          <p>Si è verificato un errore nel caricamento dei dati. Riprova più tardi.</p>
-        </div>
-      `;
+      filtra();
     });
-}
-
-function popolaMenu(data) {
-  const menuDiv = document.getElementById("menu");
-  menuDiv.innerHTML = "";
-
-  // Aggiungi un ritardo crescente per l'animazione
-  data.forEach((piatto, index) => {
-    const piattoDiv = creaElementoPiatto(piatto);
-    piattoDiv.style.animationDelay = `${index * 0.1}s`;
-    menuDiv.appendChild(piattoDiv);
   });
 
-  // Se non ci sono risultati
-  if (data.length === 0) {
-    menuDiv.innerHTML = `
+  // Search
+  document.getElementById('search-input').addEventListener('input', filtra);
+
+  // Modal close
+  document.getElementById('modal-close').addEventListener('click', chiudiModal);
+  document.getElementById('modal-backdrop').addEventListener('click', e => {
+    if (e.target === e.currentTarget) chiudiModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') chiudiModal(); });
+});
+
+// ─────────────── DATA HELPERS ───────────────
+const IMAGE_MAP = {
+  'url_immagine_1': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+  'url_immagine_2': 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80',
+  'url_immagine_3': 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=800&q=80',
+  'url_immagine_4': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80',
+};
+
+function arricchisci(p) {
+  if (IMAGE_MAP[p.immagine]) p.immagine = IMAGE_MAP[p.immagine];
+  if (!Array.isArray(p.categorie)) p.categorie = [p.categoria];
+  if (!p.ingredienti) p.ingredienti = estraiIngredienti(p.descrizione);
+  return p;
+}
+
+function estraiIngredienti(desc) {
+  return desc
+    .split(/,\s?/)
+    .slice(0, 5)
+    .map(s => s.trim().replace(/^(con|e|al|ai|agli|alla|alle)\s/i, '').replace(/^\w/, c => c.toUpperCase()));
+}
+
+// ─────────────── RENDER ───────────────
+function render(lista) {
+  const container = document.getElementById('menu');
+  const count = document.getElementById('results-count');
+  container.innerHTML = '';
+  count.textContent = `${lista.length} piatt${lista.length === 1 ? 'o' : 'i'}`;
+
+  if (!lista.length) {
+    container.innerHTML = `
       <div class="no-results">
+        <div class="nr-icon">🍽</div>
         <p>Nessun piatto trovato. Prova con un'altra ricerca.</p>
+      </div>`;
+    return;
+  }
+
+  lista.forEach((piatto, i) => {
+    const card = creaCard(piatto);
+    card.style.animationDelay = `${i * 0.07}s`;
+    container.appendChild(card);
+  });
+}
+
+function creaCard(piatto) {
+  const card = document.createElement('div');
+  const cats = piatto.categorie || [piatto.categoria];
+  card.className = 'piatto ' + cats.join(' ');
+
+  const badgesHTML = cats
+    .map((c, j) => `<span class="badge ${j === 0 ? 'badge-main' : 'badge-extra'}">${c}</span>`)
+    .join('');
+
+  card.innerHTML = `
+    <div class="piatto-img">
+      <img src="${piatto.immagine}" alt="${piatto.nome}" loading="lazy">
+      <div class="badges">${badgesHTML}</div>
+    </div>
+    <div class="piatto-body">
+      <h2 class="piatto-nome">${piatto.nome}</h2>
+      <p class="piatto-desc">${piatto.descrizione}</p>
+      <div class="piatto-footer">
+        <span class="piatto-prezzo">${piatto.prezzo.toFixed(2)} ${piatto.valuta}</span>
+        <span class="btn-detail">
+          Dettagli
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
       </div>
-    `;
-  }
+    </div>`;
+
+  card.addEventListener('click', () => apriModal(piatto));
+  return card;
 }
 
-function creaElementoPiatto(piatto) {
-  const piattoDiv = document.createElement("div");
+// ─────────────── FILTER ───────────────
+function filtra() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const active = [...document.querySelectorAll('.filter-btn.active')].map(b => b.dataset.category);
+  const showAll = active.includes('Tutto');
 
-  // Aggiungi tutte le categorie come classi
-  let classiCategorie = "";
-  if (Array.isArray(piatto.categorie)) {
-    piatto.categorie.forEach((cat) => {
-      classiCategorie += ` ${cat}`;
-    });
-  } else {
-    classiCategorie = piatto.categoria;
-  }
-
-  piattoDiv.className = `piatto${classiCategorie}`;
-
-  // Mostra sempre tutte le categorie del piatto come badge
-  let badgeCategoria = "";
-  if (Array.isArray(piatto.categorie)) {
-    badgeCategoria = piatto.categorie
-      .map((cat) => `<span class="categoria-badge">${cat}</span>`)
-      .join("");
-  } else {
-    badgeCategoria = `<span class="categoria-badge">${piatto.categoria}</span>`;
-  }
-
-  piattoDiv.innerHTML = `
-    <div class="piatto-img-container">
-      <img src="${piatto.immagine}" alt="${piatto.nome}">
-      ${badgeCategoria}
-    </div>
-    <div class="piatto-content">
-      <h2>${piatto.nome}</h2>
-      <p class="piatto-descrizione">${piatto.descrizione}</p>
-      <p class="piatto-prezzo">${piatto.prezzo} ${piatto.valuta}</p>
-    </div>
-  `;
-
-  return piattoDiv;
-}
-
-function filtraPiatti() {
-  const query = document.getElementById("search-input").value.toLowerCase().trim();
-  
-  // Ottieni le categorie attive
-  const activeCategories = [...document.querySelectorAll(".filter-btn.active")]
-    .map(btn => btn.getAttribute("data-category"));
-
-  // Controlla se "Tutto" è selezionato
-  const showAll = activeCategories.includes("Tutto");
-
-  const piattoFiltrati = tuttiPiatti.filter((piatto) => {
-    // Verifica se il piatto corrisponde alla query di ricerca
-    const matchQuery =
-      piatto.nome.toLowerCase().includes(query) ||
-      piatto.descrizione.toLowerCase().includes(query);
-
-    // Verifica se il piatto appartiene a una delle categorie selezionate
-    const matchCategoria = showAll || piatto.categorie.some(cat => activeCategories.includes(cat));
-
-    return matchQuery && matchCategoria;
+  const risultati = tuttiPiatti.filter(p => {
+    const matchQ = !q || p.nome.toLowerCase().includes(q) || p.descrizione.toLowerCase().includes(q);
+    const matchC = showAll || p.categorie.some(c => active.includes(c));
+    return matchQ && matchC;
   });
 
-  popolaMenu(piattoFiltrati);
+  render(risultati);
+}
+
+// ─────────────── MODAL ───────────────
+function apriModal(piatto) {
+  document.getElementById('modal-img').src = piatto.immagine;
+  document.getElementById('modal-img').alt = piatto.nome;
+  document.getElementById('modal-nome').textContent = piatto.nome;
+  document.getElementById('modal-desc').textContent = piatto.descrizione;
+  document.getElementById('modal-prezzo').textContent = `${piatto.prezzo.toFixed(2)} ${piatto.valuta}`;
+
+  const badges = document.getElementById('modal-badges');
+  badges.innerHTML = (piatto.categorie || [piatto.categoria])
+    .map(c => `<span class="modal-badge">${c}</span>`)
+    .join('');
+
+  const ings = document.getElementById('modal-ingredients');
+  ings.innerHTML = (piatto.ingredienti || [])
+    .map(i => `<span class="ingredient-tag">${i}</span>`)
+    .join('');
+
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function chiudiModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
 }

@@ -7,702 +7,103 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    /* ─────────────── RESET & VARIABLES ─────────────── */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --ink:      #1a1209;
-      --parchment:#f5f0e8;
-      --cream:    #faf7f2;
-      --ember:    #c1440e;
-      --ember-soft:#e8693a;
-      --gold:     #b8924a;
-      --gold-light:#d4b483;
-      --muted:    #7a6e62;
-      --card:     #ffffff;
-      --shadow-sm:0 2px 12px rgba(26,18,9,0.07);
-      --shadow-md:0 8px 32px rgba(26,18,9,0.12);
-      --shadow-lg:0 20px 60px rgba(26,18,9,0.18);
-      --radius:   16px;
-      --trans:    all 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      color: var(--ink);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ─────────────── NOISE TEXTURE OVERLAY ─────────────── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      background-size: 200px;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.4;
-    }
-
-    /* ─────────────── HEADER ─────────────── */
-    header {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(250,247,242,0.88);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(184,146,74,0.15);
-      transition: var(--trans);
-    }
-
-    .header-inner {
-      max-width: 1280px; margin: 0 auto;
-      padding: 0 32px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 24px;
-      height: 72px;
-    }
-
-    .logo {
-      display: flex; align-items: center; gap: 12px;
-      text-decoration: none;
-    }
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: var(--ember);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 16px;
-    }
-    .logo h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem; font-weight: 600;
-      color: var(--ink); letter-spacing: 0.01em;
-    }
-
-    .search-wrap {
-      position: relative; max-width: 340px; width: 100%;
-    }
-    .search-wrap svg {
-      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); pointer-events: none;
-    }
-    #search-input {
-      width: 100%; padding: 10px 16px 10px 40px;
-      background: var(--parchment);
-      border: 1.5px solid transparent;
-      border-radius: 40px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.875rem; color: var(--ink);
-      outline: none; transition: var(--trans);
-    }
-    #search-input:focus {
-      border-color: var(--gold);
-      background: #fff;
-      box-shadow: 0 0 0 4px rgba(184,146,74,0.1);
-    }
-    #search-input::placeholder { color: var(--muted); }
-
-    nav.filters {
-      display: flex; gap: 8px; align-items: center;
-    }
-    .filter-btn {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.8rem; font-weight: 500;
-      padding: 7px 16px;
-      background: transparent;
-      border: 1.5px solid rgba(184,146,74,0.35);
-      border-radius: 40px; cursor: pointer;
-      color: var(--muted);
-      transition: var(--trans);
-      white-space: nowrap;
-    }
-    .filter-btn:hover { border-color: var(--ember); color: var(--ember); }
-    .filter-btn.active {
-      background: var(--ember); border-color: var(--ember);
-      color: #fff; box-shadow: 0 4px 14px rgba(193,68,14,0.3);
-    }
-
-    /* ─────────────── HERO ─────────────── */
-    .hero {
-      margin-top: 72px;
-      position: relative; overflow: hidden;
-      height: clamp(280px, 45vh, 520px);
-      display: flex; align-items: flex-end;
-    }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=85');
-      background-size: cover; background-position: center 40%;
-      transform: scale(1.05);
-      transition: transform 8s ease-out;
-    }
-    .hero-bg.loaded { transform: scale(1); }
-    .hero-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(26,18,9,0.85) 0%, rgba(26,18,9,0.2) 60%, transparent 100%);
-    }
-    .hero-content {
-      position: relative; z-index: 2;
-      padding: 0 40px 48px;
-      max-width: 1280px; width: 100%;
-    }
-    .hero-tag {
-      display: inline-block;
-      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--gold-light);
-      margin-bottom: 12px;
-    }
-    .hero h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.5rem, 6vw, 5rem);
-      font-weight: 300; color: #fff;
-      line-height: 1.05;
-      letter-spacing: -0.01em;
-    }
-    .hero h2 em { font-style: italic; color: var(--gold-light); }
-    .hero-sub {
-      margin-top: 12px;
-      font-size: 0.95rem; font-weight: 300; color: rgba(255,255,255,0.7);
-    }
-
-    /* ─────────────── MAIN LAYOUT ─────────────── */
-    main {
-      max-width: 1280px; margin: 0 auto;
-      padding: 48px 32px 80px;
-    }
-
-    .section-header {
-      display: flex; align-items: baseline; gap: 16px;
-      margin-bottom: 32px;
-    }
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; font-weight: 400;
-      color: var(--ink);
-    }
-    .section-count {
-      font-size: 0.8rem; color: var(--muted);
-      font-weight: 300;
-    }
-
-    /* ─────────────── MENU GRID ─────────────── */
-    #menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    /* ─────────────── CARD ─────────────── */
-    .piatto {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      cursor: pointer;
-      display: flex; flex-direction: column;
-      border: 1px solid rgba(184,146,74,0.1);
-      transition: var(--trans);
-      opacity: 0;
-      transform: translateY(24px);
-      animation: cardIn 0.5s cubic-bezier(0.4,0,0.2,1) forwards;
-    }
-    @keyframes cardIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .piatto:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(184,146,74,0.25);
-    }
-
-    .piatto-img {
-      position: relative; height: 220px; overflow: hidden;
-      background: var(--parchment);
-    }
-    .piatto-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
-    }
-    .piatto:hover .piatto-img img { transform: scale(1.08); }
-
-    .badges {
-      position: absolute; top: 14px; left: 14px;
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    .badge {
-      font-size: 0.68rem; font-weight: 500;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 20px;
-      backdrop-filter: blur(12px);
-    }
-    .badge-main {
-      background: rgba(193,68,14,0.85); color: #fff;
-    }
-    .badge-extra {
-      background: rgba(26,18,9,0.55); color: rgba(255,255,255,0.9);
-    }
-
-    .piatto-body {
-      padding: 20px 22px 24px;
-      flex: 1; display: flex; flex-direction: column; gap: 8px;
-    }
-    .piatto-nome {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem; font-weight: 600;
-      color: var(--ink); line-height: 1.2;
-    }
-    .piatto-desc {
-      font-size: 0.83rem; color: var(--muted);
-      line-height: 1.55; flex: 1;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .piatto-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 12px; padding-top: 14px;
-      border-top: 1px solid var(--parchment);
-    }
-    .piatto-prezzo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem; font-weight: 600;
-      color: var(--ember);
-    }
-    .btn-detail {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 0.78rem; font-weight: 500;
-      color: var(--gold); letter-spacing: 0.04em;
-      text-transform: uppercase;
-      transition: var(--trans);
-    }
-    .btn-detail svg { transition: transform 0.3s; }
-    .piatto:hover .btn-detail { color: var(--ember); }
-    .piatto:hover .btn-detail svg { transform: translateX(4px); }
-
-    /* ─────────────── NO RESULTS ─────────────── */
-    .no-results {
-      grid-column: 1/-1;
-      padding: 80px 40px; text-align: center;
-      background: var(--card); border-radius: var(--radius);
-      border: 1px dashed rgba(184,146,74,0.3);
-    }
-    .no-results .nr-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
-    .no-results p { font-size: 1.1rem; color: var(--muted); }
-
-    /* ─────────────── MODAL ─────────────── */
-    .modal-backdrop {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(26,18,9,0.6);
-      backdrop-filter: blur(8px);
-      display: flex; align-items: flex-end;
-      justify-content: center;
-      padding: 0 0 0 0;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.35s ease;
-    }
-    .modal-backdrop.open {
-      opacity: 1; pointer-events: all;
-    }
-
-    .modal {
-      background: var(--card);
-      border-radius: 28px 28px 0 0;
-      width: 100%; max-width: 640px;
-      max-height: 92vh;
-      overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
-      position: relative;
-    }
-    .modal-backdrop.open .modal {
-      transform: translateY(0);
-    }
-
-    .modal-drag {
-      width: 40px; height: 4px; border-radius: 4px;
-      background: rgba(122,110,98,0.25);
-      margin: 16px auto 0;
-    }
-
-    .modal-img {
-      width: 100%; height: 280px; object-fit: cover;
-      margin-top: 12px;
-    }
-
-    .modal-body {
-      padding: 28px 32px 40px;
-    }
-    .modal-badges {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-    .modal-badge {
-      font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 5px 12px; border-radius: 20px;
-      border: 1.5px solid var(--gold);
-      color: var(--gold);
-    }
-    .modal-nome {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem; font-weight: 600;
-      color: var(--ink); line-height: 1.1;
-      margin-bottom: 14px;
-    }
-    .modal-desc {
-      font-size: 0.95rem; color: var(--muted);
-      line-height: 1.7; margin-bottom: 24px;
-    }
-    .modal-divider {
-      height: 1px; background: var(--parchment);
-      margin: 20px 0;
-    }
-    .modal-info-row {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .modal-prezzo-label {
-      font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted);
-    }
-    .modal-prezzo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.8rem; font-weight: 400;
-      color: var(--ember); line-height: 1;
-    }
-
-    .modal-close {
-      position: absolute; top: 20px; right: 20px;
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--parchment);
-      border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: var(--trans); z-index: 2;
-    }
-    .modal-close:hover { background: var(--ink); color: #fff; }
-
-    /* Allergen / detail blocks */
-    .detail-block {
-      background: var(--parchment);
-      border-radius: 12px; padding: 18px 20px;
-      margin-bottom: 14px;
-    }
-    .detail-block-title {
-      font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 8px;
-    }
-    .detail-block p {
-      font-size: 0.88rem; color: var(--ink); line-height: 1.5;
-    }
-    .ingredients-list {
-      display: flex; flex-wrap: wrap; gap: 8px;
-    }
-    .ingredient-tag {
-      font-size: 0.78rem; padding: 4px 10px;
-      background: #fff; border-radius: 20px;
-      border: 1px solid rgba(184,146,74,0.2);
-      color: var(--ink);
-    }
-
-    /* ─────────────── FOOTER ─────────────── */
-    footer {
-      text-align: center;
-      padding: 28px;
-      border-top: 1px solid rgba(184,146,74,0.12);
-      background: var(--ink); color: rgba(255,255,255,0.5);
-      font-size: 0.8rem; letter-spacing: 0.05em;
-    }
-    footer span { color: var(--gold-light); }
-
-    /* ─────────────── SCROLLBAR ─────────────── */
-    .modal::-webkit-scrollbar { width: 4px; }
-    .modal::-webkit-scrollbar-track { background: transparent; }
-    .modal::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 4px; }
-
-    /* ─────────────── RESPONSIVE ─────────────── */
-    @media (max-width: 900px) {
-      .header-inner {
-        grid-template-columns: 1fr;
-        height: auto; padding: 14px 20px; gap: 12px;
-      }
-      .logo { justify-content: center; }
-      .search-wrap { max-width: 100%; }
-      nav.filters { justify-content: center; flex-wrap: wrap; }
-      .hero { margin-top: 160px; }
-      .hero-content { padding: 0 24px 36px; }
-    }
-    @media (max-width: 600px) {
-      main { padding: 32px 16px 60px; }
-      #menu { grid-template-columns: 1fr; gap: 16px; }
-      .hero { height: clamp(240px, 55vw, 360px); }
-      .modal-body { padding: 20px 20px 32px; }
-      .modal-nome { font-size: 1.8rem; }
-      .modal-img { height: 220px; }
-    }
-    @media (min-width: 641px) {
-      .modal-backdrop { align-items: center; padding: 20px; }
-      .modal { border-radius: 28px; max-height: 88vh; }
-    }
-  </style>
+  <link rel="stylesheet" href="styelrestaurant.css">
 </head>
 <body>
 
-<!-- ── HEADER ── -->
-<header>
-  <div class="header-inner">
-    <a class="logo" href="#">
-      <div class="logo-icon">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-          <line x1="9" y1="9" x2="9.01" y2="9"/>
-          <line x1="15" y1="9" x2="15.01" y2="9"/>
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-inner">
+
+      <a class="logo" href="#">
+        <div class="logo-icon">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+            <line x1="9" y1="9" x2="9.01" y2="9"/>
+            <line x1="15" y1="9" x2="15.01" y2="9"/>
+          </svg>
+        </div>
+        <h1>La Cucina Italiana</h1>
+      </a>
+
+      <div class="search-wrap">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
+        <input type="text" id="search-input" placeholder="Cerca piatti, ingredienti…">
       </div>
-      <h1>La Cucina Italiana</h1>
-    </a>
 
-    <div class="search-wrap">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input type="text" id="search-input" placeholder="Cerca piatti, ingredienti…">
+      <nav class="filters" id="filter-nav">
+        <button class="filter-btn active" data-category="Tutto">Tutto</button>
+        <button class="filter-btn" data-category="Antipasto">Antipasto</button>
+        <button class="filter-btn" data-category="Primo">Primo</button>
+        <button class="filter-btn" data-category="Secondo">Secondo</button>
+        <button class="filter-btn" data-category="Dolce">Dolce</button>
+      </nav>
+
     </div>
+  </header>
 
-    <nav class="filters" id="filter-nav">
-      <button class="filter-btn active" data-category="Tutto">Tutto</button>
-      <button class="filter-btn" data-category="Antipasto">Antipasto</button>
-      <button class="filter-btn" data-category="Primo">Primo</button>
-      <button class="filter-btn" data-category="Secondo">Secondo</button>
-      <button class="filter-btn" data-category="Dolce">Dolce</button>
-    </nav>
-  </div>
-</header>
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-tag">✦ Bologna, dal 1985</span>
+      <h2>Il nostro<br><em>menù</em></h2>
+      <p class="hero-sub">Sapori autentici della tradizione italiana, ogni giorno.</p>
+    </div>
+  </section>
 
-<!-- ── HERO ── -->
-<section class="hero">
-  <div class="hero-bg" id="hero-bg"></div>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <span class="hero-tag">✦ Bologna, dal 1985</span>
-    <h2>Il nostro<br><em>menù</em></h2>
-    <p class="hero-sub">Sapori autentici della tradizione italiana, ogni giorno.</p>
-  </div>
-</section>
+  <!-- ── MAIN ── -->
+  <main>
+    <div class="section-header">
+      <h3 class="section-title">Tutti i piatti</h3>
+      <span class="section-count" id="results-count"></span>
+    </div>
+    <div id="menu"></div>
+  </main>
 
-<!-- ── MAIN ── -->
-<main>
-  <div class="section-header">
-    <h3 class="section-title">Tutti i piatti</h3>
-    <span class="section-count" id="results-count"></span>
-  </div>
-  <div id="menu"></div>
-</main>
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>&copy; 2024 <span>La Cucina Italiana</span> — Tutti i diritti riservati.</p>
+  </footer>
 
-<footer>
-  <p>&copy; 2024 <span>La Cucina Italiana</span> — Tutti i diritti riservati.</p>
-</footer>
-
-<!-- ── MODAL ── -->
-<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true">
-  <div class="modal" id="modal">
-    <div class="modal-drag"></div>
-    <button class="modal-close" id="modal-close" aria-label="Chiudi">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-    <img class="modal-img" id="modal-img" src="" alt="">
-    <div class="modal-body">
-      <div class="modal-badges" id="modal-badges"></div>
-      <h2 class="modal-nome" id="modal-nome"></h2>
-      <p class="modal-desc" id="modal-desc"></p>
-      <div class="detail-block">
-        <div class="detail-block-title">Ingredienti principali</div>
-        <div class="ingredients-list" id="modal-ingredients"></div>
-      </div>
-      <div class="modal-divider"></div>
-      <div class="modal-info-row">
-        <div>
-          <div class="modal-prezzo-label">Prezzo</div>
-          <div class="modal-prezzo" id="modal-prezzo"></div>
+  <!-- ── MODAL ── -->
+  <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal" id="modal">
+      <div class="modal-drag"></div>
+      <button class="modal-close" id="modal-close" aria-label="Chiudi">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <img class="modal-img" id="modal-img" src="" alt="">
+      <div class="modal-body">
+        <div class="modal-badges" id="modal-badges"></div>
+        <h2 class="modal-nome" id="modal-nome"></h2>
+        <p class="modal-desc" id="modal-desc"></p>
+        <div class="detail-block">
+          <div class="detail-block-title">Ingredienti principali</div>
+          <div class="ingredients-list" id="modal-ingredients"></div>
         </div>
-        <div class="detail-block" style="margin:0;padding:12px 18px;text-align:right">
-          <div class="detail-block-title">Disponibilità</div>
-          <p style="font-weight:500;color:#2d7a3a;">✓ Disponibile oggi</p>
+        <div class="modal-divider"></div>
+        <div class="modal-info-row">
+          <div>
+            <div class="modal-prezzo-label">Prezzo</div>
+            <div class="modal-prezzo" id="modal-prezzo"></div>
+          </div>
+          <div class="detail-block" style="margin:0; padding:12px 18px; text-align:right;">
+            <div class="detail-block-title">Disponibilità</div>
+            <p style="font-weight:500; color:#2d7a3a;">✓ Disponibile oggi</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-// ── DATA ──
-const PIATTI_FALLBACK = [
-  { nome:"Bruschetta al Pomodoro", prezzo:8.5, valuta:"€", categoria:"Antipasto", categorie:["Antipasto","Vegetariano"], descrizione:"Pane tostato con pomodorini freschi, basilico, aglio e olio extravergine d'oliva", immagine:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80", ingredienti:["Pane casereccio","Pomodorini","Basilico fresco","Aglio","Olio EVO"] },
-  { nome:"Spaghetti alla Carbonara", prezzo:14.0, valuta:"€", categoria:"Primo", categorie:["Primo","Specialità"], descrizione:"Pasta con uova, guanciale croccante, pecorino romano e pepe nero", immagine:"https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80", ingredienti:["Spaghetti","Guanciale","Uova","Pecorino Romano","Pepe nero"] },
-  { nome:"Tagliata di Manzo", prezzo:22.0, valuta:"€", categoria:"Secondo", categorie:["Secondo","Specialità"], descrizione:"Controfiletto di manzo con rucola, scaglie di parmigiano e riduzione di aceto balsamico", immagine:"https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=800&q=80", ingredienti:["Controfiletto di manzo","Rucola","Parmigiano Reggiano","Aceto Balsamico","Olio EVO"] },
-  { nome:"Tiramisù", prezzo:7.5, valuta:"€", categoria:"Dolce", categorie:["Dolce","Specialità"], descrizione:"Dolce classico italiano con savoiardi, mascarpone, caffè e cacao", immagine:"https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80", ingredienti:["Savoiardi","Mascarpone","Uova","Caffè espresso","Cacao amaro"] },
-  { nome:"Carpaccio di Polpo", prezzo:12.5, valuta:"€", categoria:"Antipasto", categorie:["Antipasto","Pesce"], descrizione:"Sottili fette di polpo con olio al limone, rucola e pomodorini", immagine:"https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80", ingredienti:["Polpo fresco","Limone","Rucola","Pomodorini","Olio EVO"] },
-  { nome:"Risotto ai Funghi Porcini", prezzo:16.0, valuta:"€", categoria:"Primo", categorie:["Primo","Vegetariano"], descrizione:"Riso Carnaroli con funghi porcini, burro, parmigiano e prezzemolo", immagine:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=800&q=80", ingredienti:["Riso Carnaroli","Funghi Porcini","Burro","Parmigiano","Prezzemolo","Vino bianco"] },
-  { nome:"Filetto di Branzino", prezzo:24.0, valuta:"€", categoria:"Secondo", categorie:["Secondo","Pesce"], descrizione:"Filetto di branzino al forno con patate, pomodorini e olive", immagine:"https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80", ingredienti:["Branzino fresco","Patate","Pomodorini","Olive Taggiasche","Erbe aromatiche"] },
-  { nome:"Panna Cotta", prezzo:6.5, valuta:"€", categoria:"Dolce", categorie:["Dolce"], descrizione:"Dolce cremoso con salsa ai frutti di bosco", immagine:"https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80", ingredienti:["Panna fresca","Gelatina","Zucchero","Frutti di bosco","Vaniglia"] }
-];
-
-let tuttiPiatti = [];
-
-// ── INIT ──
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => document.getElementById('hero-bg').classList.add('loaded'), 100);
-
-  fetch('piatti.json')
-    .then(r => { if(!r.ok) throw new Error(); return r.json(); })
-    .then(data => {
-      tuttiPiatti = data.map(arricchisci);
-      render(tuttiPiatti);
-    })
-    .catch(() => {
-      tuttiPiatti = PIATTI_FALLBACK;
-      render(tuttiPiatti);
-    });
-
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const cat = btn.dataset.category;
-      if (cat === 'Tutto') {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      } else {
-        btn.classList.toggle('active');
-        document.querySelector('.filter-btn[data-category="Tutto"]').classList.remove('active');
-        const active = document.querySelectorAll('.filter-btn.active');
-        const others = document.querySelectorAll('.filter-btn:not([data-category="Tutto"])');
-        if (active.length === 0 || active.length === others.length) {
-          others.forEach(b => b.classList.remove('active'));
-          document.querySelector('.filter-btn[data-category="Tutto"]').classList.add('active');
-        }
-      }
-      filtra();
-    });
-  });
-
-  document.getElementById('search-input').addEventListener('input', filtra);
-  document.getElementById('modal-close').addEventListener('click', chiudiModal);
-  document.getElementById('modal-backdrop').addEventListener('click', e => {
-    if (e.target === e.currentTarget) chiudiModal();
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') chiudiModal(); });
-});
-
-function arricchisci(p) {
-  const map = {
-    'url_immagine_1':'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-    'url_immagine_2':'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80',
-    'url_immagine_3':'https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=800&q=80',
-    'url_immagine_4':'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800&q=80',
-  };
-  if (map[p.immagine]) p.immagine = map[p.immagine];
-  if (!Array.isArray(p.categorie)) p.categorie = [p.categoria];
-  if (!p.ingredienti) p.ingredienti = estraiIngredienti(p.descrizione);
-  return p;
-}
-
-function estraiIngredienti(desc) {
-  return desc.split(/,\se|,\s|,/).slice(0,5).map(s => s.trim().replace(/^con\s/i,'').replace(/^e\s/i,'').replace(/^\w/, c => c.toUpperCase()));
-}
-
-function render(lista) {
-  const container = document.getElementById('menu');
-  const count = document.getElementById('results-count');
-  container.innerHTML = '';
-  count.textContent = `${lista.length} piatt${lista.length === 1 ? 'o' : 'i'}`;
-
-  if (!lista.length) {
-    container.innerHTML = `<div class="no-results"><div class="nr-icon">🍽</div><p>Nessun piatto trovato. Prova con un'altra ricerca.</p></div>`;
-    return;
-  }
-
-  lista.forEach((piatto, i) => {
-    const card = document.createElement('div');
-    const cats = piatto.categorie || [piatto.categoria];
-    card.className = 'piatto ' + cats.join(' ');
-    card.style.animationDelay = `${i * 0.07}s`;
-
-    const badgesHTML = cats.map((c,j) =>
-      `<span class="badge ${j===0?'badge-main':'badge-extra'}">${c}</span>`
-    ).join('');
-
-    card.innerHTML = `
-      <div class="piatto-img">
-        <img src="${piatto.immagine}" alt="${piatto.nome}" loading="lazy">
-        <div class="badges">${badgesHTML}</div>
-      </div>
-      <div class="piatto-body">
-        <h2 class="piatto-nome">${piatto.nome}</h2>
-        <p class="piatto-desc">${piatto.descrizione}</p>
-        <div class="piatto-footer">
-          <span class="piatto-prezzo">${piatto.prezzo.toFixed(2)} ${piatto.valuta}</span>
-          <span class="btn-detail">
-            Dettagli
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </span>
-        </div>
-      </div>`;
-
-    card.addEventListener('click', () => apriModal(piatto));
-    container.appendChild(card);
-  });
-}
-
-function filtra() {
-  const q = document.getElementById('search-input').value.toLowerCase().trim();
-  const active = [...document.querySelectorAll('.filter-btn.active')].map(b => b.dataset.category);
-  const showAll = active.includes('Tutto');
-
-  const res = tuttiPiatti.filter(p => {
-    const matchQ = !q || p.nome.toLowerCase().includes(q) || p.descrizione.toLowerCase().includes(q);
-    const matchC = showAll || p.categorie.some(c => active.includes(c));
-    return matchQ && matchC;
-  });
-  render(res);
-}
-
-// ── MODAL ──
-function apriModal(piatto) {
-  document.getElementById('modal-img').src = piatto.immagine;
-  document.getElementById('modal-img').alt = piatto.nome;
-  document.getElementById('modal-nome').textContent = piatto.nome;
-  document.getElementById('modal-desc').textContent = piatto.descrizione;
-  document.getElementById('modal-prezzo').textContent = `${piatto.prezzo.toFixed(2)} ${piatto.valuta}`;
-
-  const badges = document.getElementById('modal-badges');
-  badges.innerHTML = (piatto.categorie || [piatto.categoria]).map(c =>
-    `<span class="modal-badge">${c}</span>`
-  ).join('');
-
-  const ings = document.getElementById('modal-ingredients');
-  ings.innerHTML = (piatto.ingredienti || []).map(i =>
-    `<span class="ingredient-tag">${i}</span>`
-  ).join('');
-
-  document.getElementById('modal-backdrop').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function chiudiModal() {
-  document.getElementById('modal-backdrop').classList.remove('open');
-  document.body.style.overflow = '';
-}
-</script>
+  <script src="scriptrestaurant.js"></script>
 </body>
 </html>
