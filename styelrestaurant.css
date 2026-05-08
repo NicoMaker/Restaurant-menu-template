@@ -43,88 +43,165 @@ body::before {
 header {
   position: fixed; top: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(250,247,242,0.88);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(184,146,74,0.15);
+  background: rgba(250,247,242,0.95);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px);
   transition: var(--trans);
 }
 
-.header-inner {
+/* Riga 1: logo + search */
+.header-top {
   max-width: 1280px; margin: 0 auto;
   padding: 0 32px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
-  height: 72px;
+  height: 64px;
+  border-bottom: 1px solid rgba(184,146,74,0.1);
+}
+
+/* Riga 2: filtri */
+.header-filters {
+  border-bottom: 1px solid rgba(184,146,74,0.12);
+  background: rgba(245,240,232,0.5);
+}
+.header-filters-inner {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.header-filters-inner::-webkit-scrollbar { display: none; }
+
+/* Separatore decorativo tra Tutto e le categorie */
+.filter-separator {
+  width: 1px; height: 20px;
+  background: rgba(184,146,74,0.3);
+  margin: 0 8px;
+  flex-shrink: 0;
 }
 
 .logo {
   display: flex; align-items: center; gap: 12px;
-  text-decoration: none;
+  text-decoration: none; flex-shrink: 0;
 }
 .logo-icon {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
   background: var(--ember);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 16px;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(193,68,14,0.35);
 }
 .logo h1 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem; font-weight: 600;
+  font-size: 1.4rem; font-weight: 600;
   color: var(--ink); letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 /* Search */
 .search-wrap {
-  position: relative; max-width: 340px; width: 100%;
+  position: relative; max-width: 280px; width: 100%;
 }
 .search-wrap svg {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
   color: var(--muted); pointer-events: none;
 }
 #search-input {
-  width: 100%; padding: 10px 16px 10px 40px;
+  width: 100%; padding: 8px 16px 8px 38px;
   background: var(--parchment);
   border: 1.5px solid transparent;
   border-radius: 40px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem; color: var(--ink);
+  font-size: 0.82rem; color: var(--ink);
   outline: none; transition: var(--trans);
 }
 #search-input:focus {
   border-color: var(--gold);
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(184,146,74,0.1);
+  box-shadow: 0 0 0 3px rgba(184,146,74,0.12);
 }
 #search-input::placeholder { color: var(--muted); }
 
-/* Filter nav */
+/* ── FILTER BUTTONS ── */
 nav.filters {
-  display: flex; gap: 8px; align-items: center;
+  display: contents; /* si comporta come wrapper trasparente */
 }
+
 .filter-btn {
+  position: relative;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.8rem; font-weight: 500;
-  padding: 7px 16px;
+  font-size: 0.78rem; font-weight: 500;
+  padding: 5px 14px;
   background: transparent;
-  border: 1.5px solid rgba(184,146,74,0.35);
-  border-radius: 40px; cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   color: var(--muted);
   transition: var(--trans);
   white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
 }
-.filter-btn:hover { border-color: var(--ember); color: var(--ember); }
+
+/* Indicatore attivo: underline animato */
+.filter-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 50%; right: 50%;
+  height: 2px;
+  background: var(--ember);
+  border-radius: 2px;
+  transition: left 0.25s cubic-bezier(0.4,0,0.2,1),
+              right 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.filter-btn:hover {
+  color: var(--ink);
+  background: rgba(184,146,74,0.08);
+}
+
 .filter-btn.active {
-  background: var(--ember); border-color: var(--ember);
-  color: #fff; box-shadow: 0 4px 14px rgba(193,68,14,0.3);
+  color: var(--ember);
+  background: rgba(193,68,14,0.07);
+  font-weight: 600;
+}
+.filter-btn.active::after {
+  left: 14px; right: 14px;
+}
+
+/* Bottone TUTTO: pill solido distinto */
+.filter-btn[data-category="Tutto"] {
+  background: var(--ember);
+  color: #fff;
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-weight: 600;
+  box-shadow: 0 3px 10px rgba(193,68,14,0.3);
+  margin-right: 2px;
+}
+.filter-btn[data-category="Tutto"]::after { display: none; }
+.filter-btn[data-category="Tutto"]:hover {
+  background: var(--ember-soft);
+  color: #fff;
+}
+.filter-btn[data-category="Tutto"]:not(.active) {
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  border: 1.5px solid rgba(184,146,74,0.3);
 }
 
 /* ─────────────── HERO ─────────────── */
 .hero {
-  margin-top: 72px;
+  margin-top: 112px;
   position: relative; overflow: hidden;
   height: clamp(280px, 45vh, 520px);
   display: flex; align-items: flex-end;
@@ -388,122 +465,15 @@ footer span { color: var(--gold-light); }
 .modal::-webkit-scrollbar-track { background: transparent; }
 .modal::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 4px; }
 
-/* ─────────────── RESPONSIVE ─────────────── */
-@media (max-width: 900px) {
-  .header-inner {
-    grid-template-columns: 1fr;
-    height: auto; padding: 14px 20px; gap: 12px;
-  }
-  .logo         { justify-content: center; }
-  .search-wrap  { max-width: 100%; }
-  nav.filters   { justify-content: center; flex-wrap: wrap; }
-  .hero         { margin-top: 160px; }
-  .hero-content { padding: 0 24px 36px; }
-}
-
-@media (max-width: 600px) {
-  main          { padding: 32px 16px 60px; }
-  #menu         { grid-template-columns: 1fr; gap: 16px; }
-  .hero         { height: clamp(240px, 55vw, 360px); }
-  .modal-body   { padding: 20px 20px 32px; }
-  .modal-nome   { font-size: 1.8rem; }
-  .modal-img    { height: 220px; }
-}
-
-@media (min-width: 641px) {
-  .modal-backdrop { align-items: center; padding: 20px; }
-  .modal          { border-radius: 28px; max-height: 88vh; }
-}
-/* ─────────────── FILTRO CONTATORI ─────────────── */
+/* ─────────────── FILTER COUNT ─────────────── */
 .filter-count {
-  display: inline-block;
-  font-size: 0.65rem;
-  font-weight: 600;
-  background: rgba(255,255,255,0.25);
-  border-radius: 10px;
-  padding: 1px 5px;
-  margin-left: 3px;
-  opacity: 0.8;
-  vertical-align: middle;
-}
-.filter-btn.active .filter-count {
-  background: rgba(255,255,255,0.3);
-  color: #fff;
-}
-.filter-btn:not(.active) .filter-count {
-  background: rgba(184,146,74,0.12);
+  font-size: 0.68rem; font-weight: 600;
   color: var(--muted);
+  opacity: 0.7;
 }
-
-/* ─────────────── BADGE HIGHLIGHT (categoria matchata) ─────────────── */
-.badge-highlight {
-  background: rgba(184,146,74,0.92) !important;
-  color: #fff !important;
-  box-shadow: 0 2px 8px rgba(184,146,74,0.5);
-  transform: scale(1.04);
-}
-
-/* ─────────────── MULTI-CATEGORIA BADGE ─────────────── */
-.multi-badge {
-  position: absolute;
-  bottom: 10px; right: 10px;
-  font-size: 0.62rem; font-weight: 700;
-  background: rgba(26,18,9,0.6);
-  color: rgba(255,255,255,0.85);
-  padding: 3px 7px;
-  border-radius: 10px;
-  backdrop-filter: blur(8px);
-  letter-spacing: 0.04em;
-}
-
-/* ─────────────── PILL CATEGORIE NELLA CARD ─────────────── */
-.piatto-pills {
-  display: flex; flex-wrap: wrap; gap: 5px;
-  margin-top: 4px; margin-bottom: 2px;
-}
-.cat-pill {
-  font-size: 0.68rem; font-weight: 500;
-  padding: 3px 9px; border-radius: 20px;
-  border: 1px solid rgba(184,146,74,0.25);
-  color: var(--muted);
-  background: transparent;
-  letter-spacing: 0.03em;
-  transition: var(--trans);
-}
-/* Pill evidenziata quando la categoria è tra quelle filtrate */
-.cat-pill-active {
-  background: rgba(193,68,14,0.08);
-  border-color: var(--ember);
-  color: var(--ember);
-  font-weight: 600;
-}
-
-/* ─────────────── ALL HIGHLIGHT (quando Tutto è attivo) ─────────────── */
-.filter-btn.all-highlight {
-  background: var(--ember);
-  border-color: var(--ember);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(193,68,14,0.25);
-  opacity: 0.75;
-}
-.filter-btn.all-highlight .filter-count {
-  background: rgba(255,255,255,0.25);
-  color: #fff;
-}
-
-/* ─────────────── FILTRO CONTATORI ─────────────── */
-.filter-count {
-  display: inline-block;
-  font-size: 0.65rem; font-weight: 600;
-  background: rgba(255,255,255,0.22);
-  border-radius: 10px;
-  padding: 1px 5px; margin-left: 3px;
-  opacity: 0.85; vertical-align: middle;
-}
-.filter-btn:not(.active):not(.all-highlight) .filter-count {
-  background: rgba(184,146,74,0.12);
-  color: var(--muted);
-}
+.filter-btn.active .filter-count { color: var(--ember); opacity: 1; }
+.filter-btn[data-category="Tutto"] .filter-count { color: rgba(255,255,255,0.8); }
+.filter-btn[data-category="Tutto"]:not(.active) .filter-count { color: var(--muted); }
 
 /* ─────────────── BADGE HIGHLIGHT ─────────────── */
 .badge-highlight {
@@ -538,4 +508,31 @@ footer span { color: var(--gold-light); }
   background: rgba(193,68,14,0.08);
   border-color: var(--ember);
   color: var(--ember); font-weight: 600;
+}
+
+/* ─────────────── RESPONSIVE ─────────────── */
+@media (max-width: 900px) {
+  .header-top { padding: 0 20px; }
+  .logo h1    { font-size: 1.2rem; }
+  .search-wrap { max-width: 200px; }
+  .header-filters-inner { padding: 0 16px; }
+  .hero       { margin-top: 112px; }
+  .hero-content { padding: 0 24px 36px; }
+}
+
+@media (max-width: 600px) {
+  .header-top   { height: 56px; padding: 0 16px; }
+  .logo h1      { font-size: 1.1rem; }
+  .search-wrap  { max-width: 140px; }
+  main          { padding: 32px 16px 60px; }
+  #menu         { grid-template-columns: 1fr; gap: 16px; }
+  .hero         { height: clamp(240px, 55vw, 360px); margin-top: 104px; }
+  .modal-body   { padding: 20px 20px 32px; }
+  .modal-nome   { font-size: 1.8rem; }
+  .modal-img    { height: 220px; }
+}
+
+@media (min-width: 641px) {
+  .modal-backdrop { align-items: center; padding: 20px; }
+  .modal          { border-radius: 28px; max-height: 88vh; }
 }
